@@ -1,4 +1,4 @@
-# ProcessTool
+# ProcessTool - tool for work with collection of proccesses
 
 #To bild and run:
 
