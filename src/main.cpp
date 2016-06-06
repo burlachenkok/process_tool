@@ -14,68 +14,68 @@
 
 namespace
 {
-	class Base
-	{
-	public:
-		Base()
-		{
-			g();
-		}
-		void g()
-		{
-			f();
+    class Base
+    {
+    public:
+        Base()
+        {
+            g();
+        }
+        void g()
+        {
+            f();
+        }
+        virtual void f() = 0;
+    };
 
-		}
-		virtual void f() = 0;
-	};
-	class  PureTest: public Base
+    class  PureTest: public Base
+    {
+    public:
+        PureTest()
 	{
-	public:
-		PureTest()
-		{
-			f();
-		}
-		virtual void f() {}
+            f();
+        }
 
-	};
+        virtual void f() {}
+    };
 }
 
 void pureCallTest()
 {
-	PureTest a;
+    PureTest a;
 }
 
 void printHelp(int argc, char** argv)
 {
-	printf(
-		"Run as:\n"
-		"\n"
-		"process_tool.exe <flags_for_launch> launch <cmdline>\n"
-		"\t" "-jobname <name> - Use this to setupt asciiz jobname\n"
-		"\t" "-new_console \t Create child process with separate console\n"
-		"\t" "-suspend \t Create process and suspend it main thread\n"
-		"\t" "-ignore_seh_exception \t Ignore SEH exception\n"
-		"\t" "-wait \t Wait (or in posix terms join) for child process execution\n"
-		"\t" "-timeExecLimit seconds \t Setup time execution limit per child process\n"
-		"\t" "-afinity int_value_with_mask \t Setup affinity mask\n"
-		"\t" "-workdir path \t Setup working directory for process\n"
-        "\t" "-stdout_native path \t Setup stdout with WinApi inheritable HANDLE\n"
-        "\t" "-stderr_native path \t Setup stderr with WinApi inheritable HANDLE\n"
-        "\t" "-stdin_native path \t Setup stdin with WinApi inheritable HANDLE\n"
-		"\n"
-		"process_tool.exe <killall_flags> killall\n"
-		"\t" "-jobname <name> \t Use this to setupt asciiz jobname\n"
-		"\n"
-		"process_tool.exe <jobinfo_flags> jobinfo\n"
-		"\t" "-jobname <name> \t Use this to setupt asciiz jobname\n"
-		"\n"
-        "process_tool.exe purevcall\t\t(Emulate Pure Virtual Call)\n"
-		"\n"
-		"process_tool.exe <sleep_flags> sleep <milliceconds> \n"
-		"optional sleep_flags:\n"
-		"\t" "-jobname <name> \t Use this to setupt asciiz jobname\n"
-		"\n\t\t\t\t\t\t(kburlachenko@gmail.com v4)\n"
-		);
+    printf(
+    "Run as:\n"
+    "\n"
+    "process_tool.exe <flags_for_launch> launch <cmdline>\n"
+    "\t" "-jobname <name> - Use this to setupt asciiz jobname\n"
+    "\t" "-new_console \t Create child process with separate console\n"
+    "\t" "-suspend \t Create process and suspend it main thread\n"
+    "\t" "-ignore_seh_exception \t Ignore SEH exception\n"
+    "\t" "-wait \t Wait (or in posix terms join) for child process execution\n"
+    "\t" "-timeExecLimit seconds \t Setup time execution limit per child process\n"
+    "\t" "-afinity int_value_with_mask \t Setup affinity mask\n"
+    "\t" "-workdir path \t Setup working directory for process\n"
+    "\t" "-stdout_native path \t Setup stdout with WinApi inheritable HANDLE\n"
+    "\t" "-stderr_native path \t Setup stderr with WinApi inheritable HANDLE\n"
+    "\t" "-stdin_native path \t Setup stdin with WinApi inheritable HANDLE\n"
+    "\n"
+    "process_tool.exe <killall_flags> killall\n"
+    "\t" "-jobname <name> \t Use this to setupt asciiz jobname\n"
+    "\n"
+    "process_tool.exe <jobinfo_flags> jobinfo\n"
+    "\t" "-jobname <name> \t Use this to setupt asciiz jobname\n"
+    "\n"
+    "process_tool.exe purevcall\t\t(Emulate Pure Virtual Call)\n"
+    "\n"
+    "process_tool.exe <sleep_flags> sleep <milliceconds> \n"
+    "optional sleep_flags:\n"
+    "\t" "-jobname <name> \t Use this to setupt asciiz jobname\n"
+    "\n\t\t\t\t\t\t(kburlachenko@gmail.com v4)\n"
+    );
 }
 
 int main(int argc, char** argv)
