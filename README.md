@@ -1,4 +1,7 @@
-# ProcessTool - tool for work with collection of proccesses
+# ProcessTool 
+
+It's a small tool to launch a process in Windows OS family and then kill process and all it's descendant proccesses.
+
 
 #To bild and run:
 
