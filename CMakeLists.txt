@@ -21,10 +21,8 @@ foreach(f ${headers})
 endforeach()
                 
 add_executable(${PROJECT_NAME} ${src} ${headers})
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-# Select crt version for windows builds
-# http://stackoverflow.com/questions/10199904/how-can-i-set-specific-compiler-flags-for-for-a-specific-target-in-a-specific-bu
+# Select crt version for windows builds: http://stackoverflow.com/questions/10199904/how-can-i-set-specific-compiler-flags-for-for-a-specific-target-in-a-specific-bu
 target_compile_options(${PROJECT_NAME} PRIVATE "/MT$<$<CONFIG:Debug>:d>")
 target_compile_definitions(${PROJECT_NAME} PRIVATE "_VARIADIC_MAX=10")
-
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)

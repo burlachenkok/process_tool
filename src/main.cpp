@@ -80,12 +80,12 @@ void printHelp(int argc, char** argv)
 
 int main(int argc, char** argv)
 {
-	// Sleep(INFINITE);
+    // Sleep(INFINITE);
 
     if (argc <= 1)
     {
-		printHelp(argc, argv);
-		return -1;
+        printHelp(argc, argv);
+        return -1;
     }
     
     bool suspend = false;
@@ -95,7 +95,7 @@ int main(int argc, char** argv)
     bool launch = false;
     unsigned long int executeLimitInSeconds = -1;	
     unsigned long int afinityMask = -1;	
-	std::string workingDir = "";	
+    std::string workingDir = "";	
 
     unsigned long stdoutFileHandle = 0;
     unsigned long stderrFileHandle = 0;
@@ -108,57 +108,61 @@ int main(int argc, char** argv)
         std::string curArg(argv[i]);
         if (!launch)
         {
-			if (curArg == "jobinfo")
-			{
-				t1sdk::tools::printAllProcessPidsInJob() &&
-				t1sdk::tools::printAllStatJobInfo();
+            if (curArg == "jobinfo")
+            {
+                t1sdk::tools::printAllProcessPidsInJob() &&
+                t1sdk::tools::printAllStatJobInfo();
 
-				return 0;
-			}
-			else if (curArg == "purevcall")
-			{
-				pureCallTest();
-				//*(int*)0 = 11;
-				return 1;
-			}
-			else if (curArg == "killall")
-			{
-				if (t1sdk::tools::terminateAllProcessesInJob())
-				{
-					printf("Successfully killed..\n");
-				}
-				return 0;
-			}
-			else if (curArg == "sleep")
-			{
-			    std::string nextArg(argv[++i]);
-				int millisecsToSleep = 0;
-			    std::stringstream(nextArg) >> millisecsToSleep;
- 			    t1sdk::tools::acquireJobAndSleep(millisecsToSleep);
-				return 0;
-			}
-			else if (curArg == "-jobname")
-			{
-				t1sdk::tools::setJobName(std::string(argv[++i]));
-			}
-			else if (curArg == "-workdir")
-			{
-				t1sdk::tools::setWorkingDirectory2Run(std::string(argv[++i]));
-			}
-			else if (curArg == "-timeExecLimit")
+                return 0;
+            }
+            else if (curArg == "purevcall")
+            {
+                pureCallTest();
+                //*(int*)0 = 11;
+                return 1;
+            }
+            else if (curArg == "killall")
+            {
+                if (t1sdk::tools::terminateAllProcessesInJob())
+                {
+                    printf("Successfully killed..\n");
+                }
+                return 0;
+            }
+            else if (curArg == "sleep")
+            {
+                std::string nextArg(argv[++i]);
+                int millisecsToSleep = 0;
+                std::stringstream(nextArg) >> millisecsToSleep;
+                t1sdk::tools::acquireJobAndSleep(millisecsToSleep);
+                return 0;
+            }
+            else if (curArg == "-jobname")
+            {
+                t1sdk::tools::setJobName(std::string(argv[++i]));
+            }
+            else if (curArg == "-workdir")
+            {
+                t1sdk::tools::setWorkingDirectory2Run(std::string(argv[++i]));
+            }
+            else if (curArg == "-timeExecLimit")
             {
                 std::string nextArg(argv[++i]);
                 std::stringstream(nextArg) >> executeLimitInSeconds;
             }
-			else if (curArg == "-afinity")
-			{
-				std::string nextArg(argv[++i]);
-				std::stringstream(nextArg) >> afinityMask;
-			}
-			else if (curArg == "-wait")
+            else if (curArg == "-afinity")
+            {
+                std::string nextArg(argv[++i]);
+                std::stringstream(nextArg) >> afinityMask;
+            }
+            else if (curArg == "-wait")
+            {
                 wait = true;
+            }
             else if (curArg == "-suspend")
+            {          
                 suspend = true;
+            }
             else if (curArg == "-stdout_native")
             {
                 std::string nextArg(argv[++i]);
@@ -175,11 +179,17 @@ int main(int argc, char** argv)
                 std::stringstream(nextArg) >> stdinFileHandle;
             }
             else if (curArg == "-ignore_seh_exception")
+            {
                 ignore_seh_exception = true;
+            }
             else if (curArg == "-new_console")
+            {
                 new_console = true;
+            }
             else if (curArg == "launch")
+            {            
                 launch = true;
+            }
             else
             {
                 printf("Unknown flag for process_tool: '%s'\n", curArg.c_str());
@@ -188,10 +198,10 @@ int main(int argc, char** argv)
         }
         else
         {
-			if (!cmdline.str().empty())
-				cmdline << " ";
+            if (!cmdline.str().empty())
+                cmdline << " ";
 
-			cmdline << curArg;
+            cmdline << curArg;
         }
     }
 

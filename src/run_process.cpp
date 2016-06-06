@@ -28,75 +28,77 @@ bool pushProcessToJob(HANDLE hProcess, HANDLE hJob)
 
 bool updateJobRestrictions(HANDLE hJob, unsigned int executionTimeLimit, unsigned long afinityMask, bool ignore_seh_exception)
 {
-	JOBOBJECT_EXTENDED_LIMIT_INFORMATION li = {0};
-	li.BasicLimitInformation.PriorityClass = NORMAL_PRIORITY_CLASS;  // process always run with this priority
+    JOBOBJECT_EXTENDED_LIMIT_INFORMATION li = {0};
+    li.BasicLimitInformation.PriorityClass = NORMAL_PRIORITY_CLASS;  // process always run with this priority
 
-	if (afinityMask != unsigned long(-1))
-	{
-		li.BasicLimitInformation.Affinity    = afinityMask;
-		li.BasicLimitInformation.LimitFlags |= JOB_OBJECT_LIMIT_AFFINITY;
-	}
+    if (afinityMask != unsigned long(-1))
+    {
+        li.BasicLimitInformation.Affinity    = afinityMask;
+        li.BasicLimitInformation.LimitFlags |= JOB_OBJECT_LIMIT_AFFINITY;
+    }
 
-	if (executionTimeLimit != unsigned long(-1))
-	{
-		
-		li.BasicLimitInformation.PerJobUserTimeLimit.QuadPart = executionTimeLimit * 10 * 1000;
-		li.BasicLimitInformation.LimitFlags |= JOB_OBJECT_LIMIT_JOB_TIME;
-		
-		/*
-		li.BasicLimitInformation.PerJobUserTimeLimit.QuadPart = executionTimeLimit;
-		li.BasicLimitInformation.LimitFlags |= JOB_OBJECT_LIMIT_PROCESS_TIME;
-		*/
+    if (executionTimeLimit != unsigned long(-1))
+    {
+        li.BasicLimitInformation.PerJobUserTimeLimit.QuadPart = executionTimeLimit * 10 * 1000;
+        li.BasicLimitInformation.LimitFlags |= JOB_OBJECT_LIMIT_JOB_TIME;
+	
+        /*
+        li.BasicLimitInformation.PerJobUserTimeLimit.QuadPart = executionTimeLimit;
+        li.BasicLimitInformation.LimitFlags |= JOB_OBJECT_LIMIT_PROCESS_TIME;
+        */
 
-	}
-	if (ignore_seh_exception)
-	{
-		li.BasicLimitInformation.LimitFlags |= JOB_OBJECT_LIMIT_DIE_ON_UNHANDLED_EXCEPTION;
-	}
-	SetInformationJobObject(hJob, JobObjectExtendedLimitInformation, &li, sizeof(li));	
-	return true;
+    }
+
+    if (ignore_seh_exception)
+    {
+        li.BasicLimitInformation.LimitFlags |= JOB_OBJECT_LIMIT_DIE_ON_UNHANDLED_EXCEPTION;
+    }
+
+    SetInformationJobObject(hJob, JobObjectExtendedLimitInformation, &li, sizeof(li));	
+    return true;
 }
 
 bool terminateAllProcessesInJob()
 {
-	HANDLE hJob = OpenJobObject(JOB_OBJECT_TERMINATE, false, jobName.c_str());
-	if (hJob == NULL)
-	{
-		printf("Job '%s' was not found...\n", jobName.c_str());
-		return false;
-	}
+    HANDLE hJob = OpenJobObject(JOB_OBJECT_TERMINATE, false, jobName.c_str());
+    if (hJob == NULL)
+    {
+        printf("Job '%s' was not found...\n", jobName.c_str());
+        return false;
+    }
 
-	BOOL res = TerminateJobObject(hJob, 0);
-	CloseHandle(hJob);
-	return SUCCEEDED(res);
+    BOOL res = TerminateJobObject(hJob, 0);
+    CloseHandle(hJob);
+    return SUCCEEDED(res);
 }
 
-bool printAllProcessPidsInJob() {
-	HANDLE hJob = OpenJobObject(JOB_OBJECT_QUERY, false, jobName.c_str());
-	if (hJob == NULL)
-	{
-		printf("Job '%s' was not found...\n", jobName.c_str());
-		return false;
-	}
+bool printAllProcessPidsInJob() 
+{
+    HANDLE hJob = OpenJobObject(JOB_OBJECT_QUERY, false, jobName.c_str());
+    if (hJob == NULL)
+    {
+        printf("Job '%s' was not found...\n", jobName.c_str());
+        return false;
+    }
 
-	const int kMaxProcessesInJob = 12;
-	DWORD cb = sizeof(JOBOBJECT_BASIC_PROCESS_ID_LIST) + (kMaxProcessesInJob - 1) * sizeof(DWORD);
-	PJOBOBJECT_BASIC_PROCESS_ID_LIST pjobpil = (PJOBOBJECT_BASIC_PROCESS_ID_LIST) malloc(cb);
-	pjobpil->NumberOfAssignedProcesses = kMaxProcessesInJob;
-	QueryInformationJobObject(hJob, JobObjectBasicProcessIdList, pjobpil, cb, &cb);
+    const int kMaxProcessesInJob = 12;
+    DWORD cb = sizeof(JOBOBJECT_BASIC_PROCESS_ID_LIST) + (kMaxProcessesInJob - 1) * sizeof(DWORD);
+    PJOBOBJECT_BASIC_PROCESS_ID_LIST pjobpil = (PJOBOBJECT_BASIC_PROCESS_ID_LIST) malloc(cb);
+    pjobpil->NumberOfAssignedProcesses = kMaxProcessesInJob;
+    QueryInformationJobObject(hJob, JobObjectBasicProcessIdList, pjobpil, cb, &cb);
 
-	printf("Job name: '%s'\n", jobName.c_str());
-	printf("Process number in the job: %i\n", int(pjobpil->NumberOfProcessIdsInList));
-	for (DWORD x = 0; x < pjobpil->NumberOfProcessIdsInList; x++) 
-	{
-		unsigned long pid = pjobpil->ProcessIdList[x];
-		printf("Process #%i in the job. it's pid: %lu\n", int(x), pid);
-	}
-	free(pjobpil);
-	CloseHandle(hJob);
-	printf("\n");
+    printf("Job name: '%s'\n", jobName.c_str());
+    printf("Process number in the job: %i\n", int(pjobpil->NumberOfProcessIdsInList));
+    for (DWORD x = 0; x < pjobpil->NumberOfProcessIdsInList; x++) 
+    {
+        unsigned long pid = pjobpil->ProcessIdList[x];
+        printf("Process #%i in the job. it's pid: %lu\n", int(x), pid);
+    }
+    free(pjobpil);
+    CloseHandle(hJob);
+    printf("\n");
 
-	return true;
+    return true;
 }
 
 bool printAllStatJobInfo() {
@@ -170,10 +172,10 @@ int runProcess(const char* theCmdline,
     //flags |= CREATE_DEFAULT_ERROR_MODE; // Use default system error mode for SetErrorMode
     const char* curDirectory = 0;               // Use parent directory
 
-	if (!workDir.empty())
-	{
-		curDirectory = workDir.c_str();
-	}
+    if (!workDir.empty())
+    {
+        curDirectory = workDir.c_str();
+    }
 
     STARTUPINFO si = {};
     si.cb = sizeof(si);
@@ -202,12 +204,13 @@ int runProcess(const char* theCmdline,
     PROCESS_INFORMATION pi;
     HANDLE hJob = CreateJobObjectA(NULL, jobName.c_str()); // let child inherit job object handle
     SetHandleInformation(hJob, HANDLE_FLAG_INHERIT, HANDLE_FLAG_INHERIT);
-	updateJobRestrictions(hJob, executeLimitInSeconds, afinityMask, ignore_seh_exception);
+
+    updateJobRestrictions(hJob, executeLimitInSeconds, afinityMask, ignore_seh_exception);
 
     BOOL newProcess = CreateProcessA(NULL, cmdline, NULL, NULL, inheritHandles, flags, NULL, curDirectory, &si, &pi);
     if (newProcess == TRUE)
     {
-		pushProcessToJob(pi.hProcess, hJob);
+        pushProcessToJob(pi.hProcess, hJob);
 		
         if(!suspend)
         {
